@@ -26,6 +26,9 @@ else
         linux/s390x)
             ARCH="s390x"
             ;;
+        linux/riscv64)
+            ARCH="riscv64"
+            ;;
         *)
             ARCH=""
             ;;

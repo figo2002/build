@@ -148,6 +148,23 @@ jobs:
           asset_name: caddy-linux-s390x
           asset_content_type: application/zip
 
+      - name: Build linux-riscv64
+        env:
+          GOOS: linux
+          GOARCH: riscv64
+        run: |
+         ./xcaddy build --output $PWD/caddy-linux-riscv64 HEAD --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy
+          chmod +x caddy-linux-riscv64
+      - name: Release linux-riscv64
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./caddy-linux-riscv64
+          asset_name: caddy-linux-riscv64
+          asset_content_type: application/zip
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
