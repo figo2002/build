@@ -172,3 +172,11 @@ jobs:
           --output "type=image,push=true" \
           --tag "${{ secrets.DOCKER_USERNAME }}/naiveproxy:latest" \
           --file Dockerfile .
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test Docker image
+        run: |
+          docker run --rm --entrypoint /usr/bin/caddy ${{ secrets.DOCKER_USERNAME }}/naiveproxy version
