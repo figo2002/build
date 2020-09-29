@@ -187,10 +187,10 @@ jobs:
           --tag "${{ secrets.DOCKER_USERNAME }}/naiveproxy:latest" \
           --file Dockerfile .
 
-    push-file:
-    needs: push-json
-    runs-on: ubuntu-latest
-    steps:
+  push-file:
+     needs: push-json
+     runs-on: ubuntu-latest
+     steps:
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
