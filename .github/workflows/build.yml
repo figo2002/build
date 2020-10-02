@@ -1,7 +1,10 @@
 on:
   push:
-    tags: 
-      - "v*"
+    branches: 
+      - 'master'
+    paths-ignore:
+      - 'src'
+      - '**.md'
 
 name: release-build
 jobs:
@@ -18,6 +21,7 @@ jobs:
 
       - name: Setup variables
         run: |
+          echo "::set-env name=VERSION::$(wget --no-check-certificate -qO- https://raw.githubusercontent.com/charlieethan/naive-build/master/version | head -1)"
           echo "::set-env name=GOPATH::$(dirname $GITHUB_WORKSPACE)"
           echo "::add-path::$(dirname $GITHUB_WORKSPACE)/bin"
         shell: bash
@@ -33,8 +37,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
+          tag_name: ${{ env.VERSION }}
+          release_name: ${{ env.VERSION }}
 
       - name: Build linux-386
         env:
