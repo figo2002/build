@@ -20,9 +20,9 @@ jobs:
 
       - name: Setup variables
         run: |
-          echo "::set-env name=VERSION::$(wget --no-check-certificate -qO- https://raw.githubusercontent.com/charlieethan/naive-build/master/version | head -1)"
-          echo "::set-env name=GOPATH::$(dirname $GITHUB_WORKSPACE)"
-          echo "::add-path::$(dirname $GITHUB_WORKSPACE)/bin"
+          echo "VERSION=$(wget --no-check-certificate -qO- https://raw.githubusercontent.com/charlieethan/naive-build/master/version | head -1)" >> $GITHUB_ENV
+          echo "GOPATH=$(dirname $GITHUB_WORKSPACE)" >> $GITHUB_ENV
+          echo "$(dirname $GITHUB_WORKSPACE)/bin" >> $GITHUB_PATH
         shell: bash
 
       - name: Setup xcaddy
