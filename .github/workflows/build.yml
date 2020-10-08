@@ -21,6 +21,7 @@ jobs:
       - name: Setup variables
         run: |
           echo "VERSION=$(wget --no-check-certificate -qO- https://raw.githubusercontent.com/charlieethan/naive-build/master/version | head -1)" >> $GITHUB_ENV
+          echo "QUIC=$(wget -qO- https://api.github.com/repos/lucas-clemente/quic-go/tags | grep name | cut -d\" -f4 | head -1)" >> $GITHUB_ENV
           echo "GOPATH=$(dirname $GITHUB_WORKSPACE)" >> $GITHUB_ENV
           echo "$(dirname $GITHUB_WORKSPACE)/bin" >> $GITHUB_PATH
         shell: bash
@@ -29,7 +30,7 @@ jobs:
         run: |
           go get -u github.com/caddyserver/xcaddy/cmd/xcaddy
           git clone -b naive https://github.com/klzgrad/forwardproxy
-          git clone -b v0.18.0 https://github.com/lucas-clemente/quic-go
+          git clone -b ${{ env.QUIC }} https://github.com/lucas-clemente/quic-go
           git clone https://github.com/mastercactapus/caddy2-proxyprotocol.git
 
       - name: Create Release
