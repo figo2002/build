@@ -1,17 +1,16 @@
 on:
   push:
-    branches: 
-      - 'master'
-    paths-ignore:
-      - 'src'
-      - '**.md'
-      - '**.yml'
+    paths:
+      - 'version'
 
 name: release-build
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Install Golang
         uses: actions/setup-go@v2
@@ -20,8 +19,9 @@ jobs:
 
       - name: Setup variables
         run: |
-          echo "VERSION=$(wget --no-check-certificate -qO- https://raw.githubusercontent.com/charlieethan/naive-build/master/version | head -1)" >> $GITHUB_ENV
+          echo "VERSION=$(cat version | head -1)" >> $GITHUB_ENV
           echo "QUIC=$(wget -qO- https://api.github.com/repos/lucas-clemente/quic-go/tags | grep name | cut -d\" -f4 | head -1)" >> $GITHUB_ENV
+          echo "PROTOCOL=$(wget -qO- https://api.github.com/repos/mastercactapus/caddy2-proxyprotocol/tags | grep name | cut -d\" -f4 | head -1)"" >> $GITHUB_ENV
           echo "GOPATH=$(dirname $GITHUB_WORKSPACE)" >> $GITHUB_ENV
           echo "$(dirname $GITHUB_WORKSPACE)/bin" >> $GITHUB_PATH
         shell: bash
@@ -31,7 +31,7 @@ jobs:
           go get -u github.com/caddyserver/xcaddy/cmd/xcaddy
           git clone -b naive https://github.com/klzgrad/forwardproxy
           git clone -b ${{ env.QUIC }} https://github.com/lucas-clemente/quic-go
-          git clone https://github.com/mastercactapus/caddy2-proxyprotocol.git
+          git clone -b ${{ env.PROTOCOL }} https://github.com/mastercactapus/caddy2-proxyprotocol.git
 
       - name: Create Release
         id: create_release
@@ -167,6 +167,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Setup variables
+        run: |
+          echo "VERSION=$(cat version | head -1)" >> $GITHUB_ENV
+        shell: bash
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -179,24 +187,35 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Gain Dockerfile
-        run: |
-          wget -O Dockerfile https://raw.githubusercontent.com/charlieethan/naive-build/master/src/naive-json/Dockerfile
-          wget -O config.json https://raw.githubusercontent.com/charlieethan/naive-build/master/src/naive-json/config.json
-          wget -O naive.sh https://raw.githubusercontent.com/charlieethan/naive-build/master/src/naive-json/naive.sh
       
-      - name: Build and push
+      - name: Build latest
         run: |
+          cd src/naive-json
           docker buildx build --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x \
           --output "type=image,push=true" \
           --tag "${{ secrets.DOCKER_USERNAME }}/naiveproxy:latest" \
+          --file Dockerfile .
+           
+      - name: Build tag
+        run: |
+          cd src/naive-json
+          docker buildx build --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x \
+          --output "type=image,push=true" \
+          --tag "${{ secrets.DOCKER_USERNAME }}/naiveproxy:${{ env.VERSION }}" \
           --file Dockerfile .
 
   push-file:
      needs: [build,push-json]
      runs-on: ubuntu-latest
      steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Setup variables
+        run: |
+          echo "VERSION=$(cat version | head -1)" >> $GITHUB_ENV
+        shell: bash
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -209,25 +228,39 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Gain Dockerfile
-        run: |
-          wget -O Dockerfile https://raw.githubusercontent.com/charlieethan/naive-build/master/src/naive-file/Dockerfile
-          wget -O Caddyfile https://raw.githubusercontent.com/charlieethan/naive-build/master/src/naive-file/Caddyfile
-          wget -O naive.sh https://raw.githubusercontent.com/charlieethan/naive-build/master/src/naive-file/naive.sh
       
-      - name: Build and push
+      - name: Build latest
         run: |
+          cd src/naive-file
           docker buildx build --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x \
           --output "type=image,push=true" \
           --tag "${{ secrets.DOCKER_USERNAME }}/naiveproxy2:latest" \
+          --file Dockerfile .
+           
+      - name: Build tag
+        run: |
+          cd src/naive-file
+          docker buildx build --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x \
+          --output "type=image,push=true" \
+          --tag "${{ secrets.DOCKER_USERNAME }}/naiveproxy2:${{ env.VERSION }}" \
           --file Dockerfile .
    
   test:
     needs: [push-json,push-file]
     runs-on: ubuntu-latest
     steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Setup variables
+        run: |
+          echo "VERSION=$(cat version | head -1)" >> $GITHUB_ENV
+        shell: bash
+
       - name: Test Docker image
         run: |
-          docker run --rm --entrypoint /usr/bin/caddy ${{ secrets.DOCKER_USERNAME }}/naiveproxy version
-          docker run --rm --entrypoint /usr/bin/caddy ${{ secrets.DOCKER_USERNAME }}/naiveproxy2 version
+          docker run --rm --entrypoint /usr/bin/caddy ${{ secrets.DOCKER_USERNAME }}/naiveproxy:latest version
+          docker run --rm --entrypoint /usr/bin/caddy ${{ secrets.DOCKER_USERNAME }}/naiveproxy:${{ env.VERSION }} version
+          docker run --rm --entrypoint /usr/bin/caddy ${{ secrets.DOCKER_USERNAME }}/naiveproxy2:latest version
+          docker run --rm --entrypoint /usr/bin/caddy ${{ secrets.DOCKER_USERNAME }}/naiveproxy2:${{ env.VERSION }} version
