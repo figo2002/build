@@ -173,7 +173,7 @@ jobs:
       
       - name: Setup variables
         run: |
-          echo "VERSION=$(cat version | head -1)" >> $GITHUB_ENV
+          echo "VERSION=$(cat version | head -1 | tr -d [:space:])" >> $GITHUB_ENV
         shell: bash
 
       - name: Set up QEMU
@@ -214,7 +214,7 @@ jobs:
       
       - name: Setup variables
         run: |
-          echo "VERSION=$(cat version | head -1)" >> $GITHUB_ENV
+          echo "VERSION=$(cat version | head -1 | tr -d [:space:])" >> $GITHUB_ENV
         shell: bash
 
       - name: Set up QEMU
@@ -255,7 +255,7 @@ jobs:
       
       - name: Setup variables
         run: |
-          echo "VERSION=$(cat version | head -1)" >> $GITHUB_ENV
+          echo "VERSION=$(cat version | head -1 | tr -d [:space:])" >> $GITHUB_ENV
         shell: bash
 
       - name: Test Docker image
