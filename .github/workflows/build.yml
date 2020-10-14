@@ -10,18 +10,18 @@ jobs:
     steps:
       
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.3
 
       - name: Install Golang
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v2.1.3
         with: 
          go-version: 1.15.x
 
       - name: Setup variables
         run: |
           echo "VERSION=$(cat version | head -1)" >> $GITHUB_ENV
-          echo "QUIC=$(wget -qO- https://api.github.com/repos/lucas-clemente/quic-go/tags | grep name | cut -d\" -f4 | head -1)" >> $GITHUB_ENV
-          echo "PROTOCOL=$(wget -qO- https://api.github.com/repos/mastercactapus/caddy2-proxyprotocol/tags | grep name | cut -d\" -f4 | head -1)"" >> $GITHUB_ENV
+          echo "QUIC=$(wget -qO- https://api.github.com/repos/lucas-clemente/quic-go/tags | grep 'name' | cut -d\" -f4 | head -1)" >> $GITHUB_ENV
+          echo "PROTOCOL=$(wget -qO- https://api.github.com/repos/mastercactapus/caddy2-proxyprotocol/tags | grep 'name' | cut -d\" -f4 | head -1)"" >> $GITHUB_ENV
           echo "GOPATH=$(dirname $GITHUB_WORKSPACE)" >> $GITHUB_ENV
           echo "$(dirname $GITHUB_WORKSPACE)/bin" >> $GITHUB_PATH
         shell: bash
@@ -47,7 +47,7 @@ jobs:
           GOOS: linux
           GOARCH: 386
         run: |
-          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-386 HEAD --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
+          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-386 --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
           chmod +x caddy-linux-386
       - name: Release linux-386
         uses: actions/upload-release-asset@v1.0.2
@@ -64,7 +64,7 @@ jobs:
           GOOS: linux
           GOARCH: amd64
         run: |
-          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-amd64 HEAD --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
+          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-amd64 --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
           chmod +x caddy-linux-amd64
       - name: Release linux-amd64
         uses: actions/upload-release-asset@v1.0.2
@@ -82,7 +82,7 @@ jobs:
           GOARCH: arm
           GOARM: 6
         run: |
-          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-arm32-v6 HEAD --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
+          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-arm32-v6 --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
           chmod +x caddy-linux-arm32-v6
       - name: Release linux-arm32-v6
         uses: actions/upload-release-asset@v1.0.2
@@ -100,7 +100,7 @@ jobs:
           GOARCH: arm
           GOARM: 7
         run: |
-          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-arm32-v7 HEAD --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
+          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-arm32-v7 --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
           chmod +x caddy-linux-arm32-v7
       - name: Release linux-arm32-v7
         uses: actions/upload-release-asset@v1.0.2
@@ -117,7 +117,7 @@ jobs:
           GOOS: linux
           GOARCH: arm64
         run: |
-          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-arm64 HEAD --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
+          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-arm64 --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
           chmod +x caddy-linux-arm64
       - name: Release linux-arm64
         uses: actions/upload-release-asset@v1.0.2
@@ -134,7 +134,7 @@ jobs:
           GOOS: linux
           GOARCH: ppc64le
         run: |
-          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-ppc64le HEAD --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
+          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-ppc64le --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
           chmod +x caddy-linux-ppc64le
       - name: Release linux-ppc64le
         uses: actions/upload-release-asset@v1.0.2
@@ -151,7 +151,7 @@ jobs:
           GOOS: linux
           GOARCH: s390x
         run: |
-          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-s390x HEAD --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
+          $GOPATH/bin/xcaddy build --output $PWD/caddy-linux-s390x --with github.com/caddyserver/forwardproxy=$PWD/forwardproxy --with github.com/mastercactapus/caddy2-proxyprotocol=$PWD/caddy2-proxyprotocol --with github.com/lucas-clemente/quic-go=$PWD/quic-go
           chmod +x caddy-linux-s390x
       - name: Release linux-s390x
         uses: actions/upload-release-asset@v1.0.2
