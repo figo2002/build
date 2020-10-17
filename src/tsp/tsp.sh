@@ -33,13 +33,13 @@ else
 fi
 [ -z "${ARCH}" ] && echo "Error: Not supported OS Architecture" && exit 1
 # Download binary file
-CADDY_FILE="caddy-linux-${ARCH}"
+TSP_FILE="tsp-linux-${ARCH}"
 
-echo "Downloading binary file: ${CADDY_FILE}"
-wget -O /usr/bin/caddy https://github.com/charlieethan/build/releases/latest/download/${CADDY_FILE} > /dev/null 2>&1
+echo "Downloading binary file: ${TSP_FILE}"
+wget -O /usr/bin/tsp https://github.com/charlieethan/build/releases/latest/download/${TSP_FILE} > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "Error: Failed to download binary file: ${CADDY_FILE}" && exit 1
+    echo "Error: Failed to download binary file: ${TSP_FILE}" && exit 1
 fi
-echo "Download binary file: ${CADDY_FILE} completed"
+echo "Download binary file: ${TSP_FILE} completed"
 
-chmod +x /usr/bin/caddy
+chmod +x /usr/bin/tsp

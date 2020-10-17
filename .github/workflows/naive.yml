@@ -1,25 +1,25 @@
 on:
   push:
     paths:
-      - 'version'
+      - 'version/naive'
 
-name: release-build
+name: naive-build
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       
       - name: Checkout
-        uses: actions/checkout@v2.3.3
+        uses: actions/checkout@v2
 
       - name: Install Golang
-        uses: actions/setup-go@v2.1.3
+        uses: actions/setup-go@v2
         with: 
          go-version: 1.15.x
 
       - name: Setup variables
         run: |
-          echo "VERSION=$(cat version | head -1 | tr -d [:space:])" >> $GITHUB_ENV
+          echo "VERSION=$(cat "version/naive" | head -1 | tr -d [:space:])" >> $GITHUB_ENV
           echo "QUIC=$(wget -qO- https://api.github.com/repos/lucas-clemente/quic-go/tags | grep 'name' | cut -d\" -f4 | head -1)" >> $GITHUB_ENV
           echo "PROTOCOL=$(wget -qO- https://api.github.com/repos/mastercactapus/caddy2-proxyprotocol/tags | grep 'name' | cut -d\" -f4 | head -1)" >> $GITHUB_ENV
           echo "GOPATH=$(dirname $GITHUB_WORKSPACE)" >> $GITHUB_ENV
@@ -173,7 +173,7 @@ jobs:
       
       - name: Setup variables
         run: |
-          echo "VERSION=$(cat version | head -1 | tr -d [:space:])" >> $GITHUB_ENV
+          echo "VERSION=$(cat "version/naive" | head -1 | tr -d [:space:])" >> $GITHUB_ENV
         shell: bash
 
       - name: Set up QEMU
@@ -214,7 +214,7 @@ jobs:
       
       - name: Setup variables
         run: |
-          echo "VERSION=$(cat version | head -1 | tr -d [:space:])" >> $GITHUB_ENV
+          echo "VERSION=$(cat "version/naive" | head -1 | tr -d [:space:])" >> $GITHUB_ENV
         shell: bash
 
       - name: Set up QEMU
@@ -255,7 +255,7 @@ jobs:
       
       - name: Setup variables
         run: |
-          echo "VERSION=$(cat version | head -1 | tr -d [:space:])" >> $GITHUB_ENV
+          echo "VERSION=$(cat "version/naive" | head -1 | tr -d [:space:])" >> $GITHUB_ENV
         shell: bash
 
       - name: Test Docker image

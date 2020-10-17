@@ -12,5 +12,4 @@ RUN set -ex \
 	&& rm -fv /root/naive.sh
 
 VOLUME /etc/naiveproxy
-ENV TZ=Asia/Shanghai
 CMD [ "/usr/bin/caddy", "run", "--config", "/etc/naiveproxy/Caddyfile" ]

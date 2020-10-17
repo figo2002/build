@@ -1,0 +1,200 @@
+on:
+  push:
+    paths:
+      - 'version/tsp'
+
+name: tsp-build
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Golang
+        uses: actions/setup-go@v2
+        with: 
+          go-version: 1.15.x
+
+      - name: Set variables
+        run: |
+          echo "VERSION=$(cat "version/tsp" | head -n1 | tr -d [:space:])" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Get code
+        run: |
+          git clone -b ${{ env.VERSION }} https://github.com/liberal-boy/tls-shunt-proxy.git
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: ${{ env.VERSION }}
+
+      - name: Build linux-386
+        run: |
+          cd tls-shunt-proxy
+          env CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -o ${GITHUB_WORKSPACE}/tsp-linux-386 -ldflags "-s -w"
+          chmod +x ${GITHUB_WORKSPACE}/tsp-linux-386
+      - name: Release linux-386
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./tsp-linux-386
+          asset_name: tsp-linux-386
+          asset_content_type: application/zip
+
+      - name: Build linux-amd64
+        run: |
+          cd tls-shunt-proxy
+          env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${GITHUB_WORKSPACE}/tsp-linux-amd64 -ldflags "-s -w"
+          chmod +x ${GITHUB_WORKSPACE}/tsp-linux-amd64
+      - name: Release linux-amd64
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./tsp-linux-amd64
+          asset_name: tsp-linux-amd64
+          asset_content_type: application/zip
+
+      - name: Build linux-arm32-v6
+        run: |
+          cd tls-shunt-proxy
+          env CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=6 go build -o ${GITHUB_WORKSPACE}/tsp-linux-arm32-v6 -ldflags "-s -w"
+          chmod +x ${GITHUB_WORKSPACE}/tsp-linux-arm32-v6
+      - name: Release linux-arm32-v6
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./tsp-linux-arm32-v6
+          asset_name: tsp-linux-arm32-v6
+          asset_content_type: application/zip
+
+      - name: Build linux-arm32-v7
+        run: |
+          cd tls-shunt-proxy
+          env CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=7 go build -o ${GITHUB_WORKSPACE}/tsp-linux-arm32-v7 -ldflags "-s -w"
+          chmod +x ${GITHUB_WORKSPACE}/tsp-linux-arm32-v7
+      - name: Release linux-arm32-v7
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./tsp-linux-arm32-v7
+          asset_name: tsp-linux-arm32-v7
+          asset_content_type: application/zip
+
+      - name: Build linux-arm64
+        run: |
+          cd tls-shunt-proxy
+          env CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o ${GITHUB_WORKSPACE}/tsp-linux-arm64 -ldflags "-s -w"
+          chmod +x ${GITHUB_WORKSPACE}/tsp-linux-arm64
+      - name: Release linux-arm64
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./tsp-linux-arm64
+          asset_name: tsp-linux-arm64
+          asset_content_type: application/zip
+
+      - name: Build linux-ppc64le
+        run: |
+          cd tls-shunt-proxy
+          env CGO_ENABLED=0 GOOS=linux GOARCH=ppc64le go build -o ${GITHUB_WORKSPACE}/tsp-linux-ppc64le -ldflags "-s -w"
+          chmod +x ${GITHUB_WORKSPACE}/tsp-linux-ppc64le
+      - name: Release linux-ppc64le
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./tsp-linux-ppc64le
+          asset_name: tsp-linux-ppc64le
+          asset_content_type: application/zip
+
+      - name: Build linux-s390x
+        run: |
+          cd tls-shunt-proxy
+          env CGO_ENABLED=0 GOOS=linux GOARCH=s390x go build -o ${GITHUB_WORKSPACE}/tsp-linux-s390x -ldflags "-s -w"
+          chmod +x ${GITHUB_WORKSPACE}/tsp-linux-s390x
+      - name: Release linux-s390x
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./tsp-linux-s390x
+          asset_name: tsp-linux-s390x
+          asset_content_type: application/zip
+  
+  push:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Setup variables
+        run: |
+          echo "VERSION=$(cat "version/tsp" | head -n1 | tr -d [:space:])" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Build latest
+        run: |
+          cd src/tsp
+          docker buildx build --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x \
+          --output "type=image,push=true" \
+          --tag "${{ secrets.DOCKER_USERNAME }}/tls-shunt-proxy:latest" \
+          --file Dockerfile .
+           
+      - name: Build tag
+        run: |
+          cd src/tsp
+          docker buildx build --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x \
+          --output "type=image,push=true" \
+          --tag "${{ secrets.DOCKER_USERNAME }}/tls-shunt-proxy:${{ env.VERSION }}" \
+          --file Dockerfile .
+           
+  test:
+     needs: push
+     runs-on: ubuntu-latest
+     steps:
+       
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Setup variables
+        run: |
+          echo "VERSION=$(cat "version/tsp" | head -n1 | tr -d [:space:])" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Test Docker image
+        run: |
+          docker run --rm --entrypoint /usr/bin/tsp ${{ secrets.DOCKER_USERNAME }}/tls-shunt-proxy:latest --help
+          docker run --rm --entrypoint /usr/bin/tsp ${{ secrets.DOCKER_USERNAME }}/tls-shunt-proxy:${{ env.VERSION }} --help

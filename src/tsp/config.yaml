@@ -1,0 +1,25 @@
+listen: 0.0.0.0:443
+redirecthttps: 0.0.0.0:80
+inboundbuffersize: 4
+outboundbuffersize: 32
+vhosts:
+  - name: vmess.example.com
+    tlsoffloading: true
+    managedcert: true
+    keytype: p256
+    cert: /etc/tls-shunt-proxy/server.pem
+    key: /etc/tls-shunt-proxy/server.key
+    alpn: h2,http/1.1
+    protocols: tls12,tls13
+    http:
+      paths:
+        - path: /vmess/ws/
+          handler: proxyPass
+          args: 127.0.0.1:2000
+
+        - path: "*"
+          handler: proxyPass
+          args: 127.0.0.1:2001
+    default:
+      handler: fileServer
+      args: /var/www/html

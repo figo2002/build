@@ -1,10 +1,12 @@
-## 关于
-这个项目旨在自动构建 Naiveproxy (Caddy) 至最新版，支持7种架构	
+## INFO
+Build some software use **Github Action** and push to **DockerHub**		
 
-`docker pull charlieethan/naiveproxy` 可使用 config.json 启动
+- [Naiveproxy](https://github.com/klzgrad/naiveproxy)		
 
+- [tls-shunt-proxy](https://github.com/liberal-boy/tls-shunt-proxy)		
 
-`docker pull charlieethan/naiveproxy2` 可使用 Caddyfile 启动
+## LICENSE
+[GPLv3](https://github.com/charlieethan/build/blob/master/LICENSE)		
 
-
-**请根据需求自由选择**
+## Credit
+[across](https://github.com/teddysun/across)
