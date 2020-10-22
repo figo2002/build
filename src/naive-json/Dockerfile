@@ -2,6 +2,7 @@ FROM --platform=${TARGETPLATFORM} alpine:latest
 LABEL maintainer="charlieethan <admin@charlieethan.com>"
 
 WORKDIR /root
+ARG TARGETPLATFORM
 COPY naive.sh /root/naive.sh
 COPY config.json /etc/naiveproxy/config.json
 RUN set -ex \
