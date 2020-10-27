@@ -47,7 +47,7 @@ jobs:
         run: |
           mkdir release
           cp trojan-r/target/i686-unknown-linux-musl/release/trojan-r release/trojan-r-linux-386 && strip -s release/trojan-r-linux-386
-          cp trojan-r/target/x86_64-unknown-linux-musl/release/trojan-r release/trojan-r-linux-amd64
+          cp trojan-r/target/x86_64-unknown-linux-musl/release/trojan-r release/trojan-r-linux-amd64 && strip -s release/trojan-r-linux-amd64
           cp trojan-r/target/arm-unknown-linux-musleabihf/release/trojan-r release/trojan-r-linux-arm32-v6
           cp trojan-r/target/armv7-unknown-linux-musleabihf/release/trojan-r release/trojan-r-linux-arm32-v7
           cp trojan-r/target/aarch64-unknown-linux-musl/release/trojan-r release/trojan-r-linux-arm64
