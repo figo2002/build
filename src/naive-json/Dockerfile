@@ -6,7 +6,7 @@ ARG TARGETPLATFORM
 COPY naive.sh /root/naive.sh
 COPY config.json /etc/naiveproxy/config.json
 RUN set -ex \
-	&& apk add --no-cache tzdata ca-certificates \
+	&& apk add --no-cache tzdata openssl ca-certificates \
 	&& mkdir -p /var/www/html /var/log/naiveproxy \
 	&& chmod +x /root/naive.sh \
 	&& /root/naive.sh "${TARGETPLATFORM}" \

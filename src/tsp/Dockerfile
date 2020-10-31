@@ -6,7 +6,7 @@ ARG TARGETPLATFORM
 COPY tsp.sh /root/tsp.sh
 COPY config.yaml /etc/tls-shunt-proxy/config.yaml
 RUN set -ex \
-	&& apk add --no-cache tzdata ca-certificates \
+	&& apk add --no-cache tzdata openssl ca-certificates \
 	&& mkdir -p /var/www/html /var/log/tsp \
 	&& chmod +x /root/tsp.sh \
 	&& /root/tsp.sh "${TARGETPLATFORM}" \

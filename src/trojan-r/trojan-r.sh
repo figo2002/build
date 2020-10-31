@@ -30,6 +30,7 @@ fi
 
 # Download files
 TROJAN_R_FILE="trojan-r-linux-${ARCH}"
+HASH_FILE="trojan-r-linux-${ARCH}.hash"
 
 echo "Downloading binary file: ${TROJAN_R_FILE}"
 wget -O /usr/bin/trojan-r https://github.com/charlieethan/build/releases/latest/download/${TROJAN_R_FILE} > /dev/null 2>&1
@@ -37,5 +38,15 @@ if [ $? -ne 0 ]; then
     echo "Error: Failed to download binary file: ${TROJAN_R_FILE}" && exit 1
 fi
 echo "Download binary file: ${TROJAN_R_FILE} completed"
+
+# Check SHA512
+LOCAL=$(openssl dgst -sha512 /usr/bin/trojan-r | sed 's/([^)]*)//g')
+STR=$(wget -qO- https://github.com/charlieethan/build/releases/latest/download/${HASH_FILE} | grep 'SHA512')
+
+if [ "${LOCAL}" = "${STR}" ]; then
+    echo " Check passed"
+else
+    echo " Check have not passed yet " && exit 1
+fi
 
 chmod +x /usr/bin/trojan-r

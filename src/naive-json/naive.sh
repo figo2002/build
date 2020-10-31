@@ -32,8 +32,10 @@ else
     esac
 fi
 [ -z "${ARCH}" ] && echo "Error: Not supported OS Architecture" && exit 1
+
 # Download binary file
 CADDY_FILE="caddy-linux-${ARCH}"
+HASH_FILE="caddy-linux-${ARCH}.hash"
 
 echo "Downloading binary file: ${CADDY_FILE}"
 wget -O /usr/bin/caddy https://github.com/charlieethan/build/releases/latest/download/${CADDY_FILE} > /dev/null 2>&1
@@ -41,5 +43,15 @@ if [ $? -ne 0 ]; then
     echo "Error: Failed to download binary file: ${CADDY_FILE}" && exit 1
 fi
 echo "Download binary file: ${CADDY_FILE} completed"
+
+# Check SHA512
+LOCAL=$(openssl dgst -sha512 /usr/bin/caddy | sed 's/([^)]*)//g')
+STR=$(wget -qO- https://github.com/charlieethan/build/releases/latest/download/${HASH_FILE} | grep 'SHA512')
+
+if [ "${LOCAL}" = "${STR}" ]; then
+    echo " Check passed"
+else
+    echo " Check have not passed yet " && exit 1
+fi
 
 chmod +x /usr/bin/caddy

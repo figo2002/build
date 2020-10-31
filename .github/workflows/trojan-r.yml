@@ -24,45 +24,10 @@ jobs:
           toolchain: stable
           components: rustfmt,clippy,rls
 
-      - name: Prepare
-        run: |
-          sudo apt install -y git wget gcc g++ make automake musl-tools
-          cargo install cross
-          rustup target add i686-unknown-linux-musl
-          rustup target add x86_64-unknown-linux-musl
-          rustup target add arm-unknown-linux-musleabihf
-          rustup target add armv7-unknown-linux-musleabihf
-          rustup target add aarch64-unknown-linux-musl
-          rustup target add aarch64-linux-android
-          rustup target add armv7-linux-androideabi
-          rustup target add i686-linux-android
-          rustup target add x86_64-linux-android
-          
       - name: Build
         run: |
-          git clone https://github.com/p4gefau1t/trojan-r.git && cd trojan-r
-          cross build --target i686-unknown-linux-musl --release
-          make x86_64-unknown-linux-musl
-          make arm-unknown-linux-musleabihf
-          make armv7-unknown-linux-musleabihf
-          make aarch64-unknown-linux-musl
-          make aarch64-linux-android
-          make armv7-linux-androideabi
-          make i686-linux-android
-          make x86_64-linux-android
-          
-      - name: Copy the files
-        run: |
-          mkdir release
-          cp trojan-r/target/i686-unknown-linux-musl/release/trojan-r release/trojan-r-linux-386 && strip -s release/trojan-r-linux-386
-          cp trojan-r/target/x86_64-unknown-linux-musl/release/trojan-r release/trojan-r-linux-amd64 && strip -s release/trojan-r-linux-amd64
-          cp trojan-r/target/arm-unknown-linux-musleabihf/release/trojan-r release/trojan-r-linux-arm32-v6
-          cp trojan-r/target/armv7-unknown-linux-musleabihf/release/trojan-r release/trojan-r-linux-arm32-v7
-          cp trojan-r/target/aarch64-unknown-linux-musl/release/trojan-r release/trojan-r-linux-arm64
-          cp trojan-r/target/aarch64-linux-android/release/trojan-r release/trojan-r-android-arm64
-          cp trojan-r/target/armv7-linux-androideabi/release/trojan-r release/trojan-r-android-arm32-v7
-          cp trojan-r/target/i686-linux-android/release/trojan-r release/trojan-r-android-386
-          cp trojan-r/target/x86_64-linux-android/release/trojan-r release/trojan-r-android-amd64
+          sudo apt install -y git wget gcc g++ make automake musl-tools
+          cp src/build/trojan-r.sh $PWD/trojan-r.sh && chmod +x trojan-r.sh && ./trojan-r.sh
        
       - name: Release
         uses: softprops/action-gh-release@v1
