@@ -62,3 +62,23 @@ jobs:
         run: |
           docker run --rm --entrypoint /usr/bin/naive ${{ secrets.DOCKER_USERNAME }}/naiveproxy:client --version
           docker run --rm --entrypoint /usr/bin/naive ${{ secrets.DOCKER_USERNAME }}/naiveproxy:${{ env.VERSION }} --version
+
+  backup:
+      needs: [build,test]
+      runs-on: ubuntu-latest
+      steps:
+
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        - name: Start backup
+          run: |
+            echo "TAGS=$(wget -qO- https://api.github.com/repos/klzgrad/naiveproxy/tags | grep 'name' | cut -d\" -f4 | head -1)" >> $GITHUB_ENV
+            wget -qO- https://api.github.com/repos/klzgrad/naiveproxy/releases/tags/${{ env.TAGS }} | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | wget -i -
+            mkdir -p release && mv naiveproxy-* release && tar -zvcf release.tar.gz release
+
+        - name: Release
+          uses: actions/upload-artifact@v2
+          with:
+            name: ${{ env.TAGS }}
+            path: release.tar.gz
