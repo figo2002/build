@@ -3,7 +3,7 @@ on:
     paths:
       - 'version/trojan-r'
 
-name: trojan-r-build
+name: trojan-r
 jobs:
   build:
     runs-on: ubuntu-latest

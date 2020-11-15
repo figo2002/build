@@ -3,7 +3,7 @@ on:
     paths:
       - 'version/naive-client'
 
-name: build
+name: naive-client
 jobs:
   build:
     runs-on: ubuntu-latest
