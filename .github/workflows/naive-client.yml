@@ -71,9 +71,13 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v2
 
-        - name: Start backup
+        - name: Set variables
           run: |
             echo "TAGS=$(wget -qO- https://api.github.com/repos/klzgrad/naiveproxy/tags | grep 'name' | cut -d\" -f4 | head -1)" >> $GITHUB_ENV
+          shell: bash
+
+        - name: Start backup
+          run: |
             wget -qO- https://api.github.com/repos/klzgrad/naiveproxy/releases/tags/${{ env.TAGS }} | jq ".assets[] | {browser_download_url}" -c | jq .browser_download_url -r | wget -i -
             mkdir -p release && mv naiveproxy-* release && tar -zvcf release.tar.gz release
 
