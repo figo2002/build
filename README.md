@@ -9,6 +9,8 @@ Build some software use **Github Actions**
 
 - [Gitea](https://github.com/go-gitea/gitea)		
 
+- [Xray](https://github.com/XTLS/Xray-core)
+
 
 ## LICENSE
 [GPLv3](https://github.com/charlieethan/build/blob/master/LICENSE)		
